@@ -8,9 +8,9 @@ A zero-dependency SwiftUI markdown renderer for iOS 18, macOS 15, and beyond. Bu
 [![No Dependencies](https://img.shields.io/badge/dependencies-none-brightgreen)]()
 
 <p align="center">
-  <img src="screenshots/1.png" width="260" alt="All block types" />
-  <img src="screenshots/2.png" width="260" alt="Default vs GitHub theme" />
-  <img src="screenshots/3.png" width="260" alt="Live editor" />
+  <img src="Screenshots/1.png" width="260" alt="All block types" />
+  <img src="Screenshots/2.png" width="260" alt="Default vs GitHub theme" />
+  <img src="Screenshots/3.png" width="260" alt="Live editor" />
 </p>
 
 ---
