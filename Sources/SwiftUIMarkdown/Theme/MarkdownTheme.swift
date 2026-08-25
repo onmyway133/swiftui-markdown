@@ -22,6 +22,14 @@ public struct MarkdownTheme: Sendable {
     public var linkColor: Color
     /// Vertical spacing between top-level blocks.
     public var blockSpacing: CGFloat
+    /// Caps the rendered height of an image block.
+    public var imageMaxHeight: CGFloat
+    public var tableHeaderBackground: Color
+    public var tableRowAlternateBackground: Color
+    public var tableBorderColor: Color
+    public var tableCornerRadius: CGFloat
+    /// Minimum width of a table column before horizontal scrolling kicks in.
+    public var tableMinColumnWidth: CGFloat
 
     public init(
         headingFont: @Sendable @escaping (Int) -> Font,
@@ -34,7 +42,13 @@ public struct MarkdownTheme: Sendable {
         quoteBarColor: Color,
         quoteTextColor: Color,
         linkColor: Color,
-        blockSpacing: CGFloat
+        blockSpacing: CGFloat,
+        imageMaxHeight: CGFloat,
+        tableHeaderBackground: Color,
+        tableRowAlternateBackground: Color,
+        tableBorderColor: Color,
+        tableCornerRadius: CGFloat,
+        tableMinColumnWidth: CGFloat
     ) {
         self.headingFont = headingFont
         self.headingColor = headingColor
@@ -47,6 +61,12 @@ public struct MarkdownTheme: Sendable {
         self.quoteTextColor = quoteTextColor
         self.linkColor = linkColor
         self.blockSpacing = blockSpacing
+        self.imageMaxHeight = imageMaxHeight
+        self.tableHeaderBackground = tableHeaderBackground
+        self.tableRowAlternateBackground = tableRowAlternateBackground
+        self.tableBorderColor = tableBorderColor
+        self.tableCornerRadius = tableCornerRadius
+        self.tableMinColumnWidth = tableMinColumnWidth
     }
 }
 

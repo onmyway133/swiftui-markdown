@@ -17,7 +17,7 @@ A zero-dependency SwiftUI markdown renderer for iOS 18, macOS 15, and beyond. Bu
 
 ## Features
 
-- **Full block-level rendering** — headings H1–H6, paragraphs, ordered and unordered lists, code blocks, block quotes, tables, thematic breaks
+- **Full block-level rendering** — headings H1–H6, paragraphs, ordered and unordered lists, code blocks, block quotes, tables, images, thematic breaks
 - **Inline formatting** — bold, italic, strikethrough, inline code, links
 - **Zero dependencies** — built entirely on Foundation and SwiftUI
 - **Simple theming** — one `MarkdownTheme` struct, no protocol hierarchies
@@ -75,7 +75,8 @@ MarkdownLabel("Download the **latest** version [here](https://example.com).")
 | Ordered list | `1. item` | Ordinal labels |
 | Code block | ` ```lang ` | Optional language caption |
 | Block quote | `> text` | Left bar accent |
-| Table | GFM pipe syntax | Header row bolded |
+| Table | GFM pipe syntax | Header row bolded, horizontally scrollable, ragged rows padded/truncated |
+| Image | `![alt](url)` | Inline, reference, and shorthand-reference syntax; falls back to alt text on load failure |
 | Thematic break | `---` | Standard divider |
 | **Inline bold** | `**text**` | |
 | **Inline italic** | `*text*` | |
@@ -122,6 +123,12 @@ MarkdownView(markdown)
 | `quoteTextColor` | `Color` | Block quote text color |
 | `linkColor` | `Color` | Hyperlink color |
 | `blockSpacing` | `CGFloat` | Vertical gap between blocks |
+| `imageMaxHeight` | `CGFloat` | Max height for rendered images |
+| `tableHeaderBackground` | `Color` | Table header row background |
+| `tableRowAlternateBackground` | `Color` | Zebra-stripe background for alternate rows |
+| `tableBorderColor` | `Color` | Table outer border color |
+| `tableCornerRadius` | `CGFloat` | Table corner radius |
+| `tableMinColumnWidth` | `CGFloat` | Minimum width per table column |
 
 ---
 
@@ -159,7 +166,8 @@ MarkdownView(markdown)
       ├─ ListBlockView               ← HStack(bullet, text) + depth indent
       ├─ CodeBlockView               ← ScrollView + monospaced + language caption
       ├─ QuoteBlockView              ← HStack(bar, text)
-      ├─ TableBlockView              ← Grid + GridRow per row
+      ├─ TableBlockView              ← ScrollView(.horizontal) + Grid + GridRow per row
+      ├─ ImageBlockView              ← AsyncImage + alt-text fallback
       └─ DividerBlockView            ← Divider()
 ```
 

@@ -29,12 +29,12 @@ struct BlockRenderer: View {
             CodeBlockView(group: group, language: language)
         case .blockQuote:
             QuoteBlockView(group: group)
-        case .table:
-            TableBlockView(groups: groups)
+        case .table(let table):
+            TableBlockView(table: table)
+        case .image(let url, let altText):
+            ImageBlockView(url: url, altText: altText)
         case .thematicBreak:
             DividerBlockView()
-        default:
-            EmptyView()
         }
     }
 }

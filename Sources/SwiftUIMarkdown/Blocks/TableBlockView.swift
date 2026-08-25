@@ -1,69 +1,96 @@
 import SwiftUI
 
-/// Renders a GFM-style table from the block groups produced for a single table.
+/// Renders a GFM-style table assembled during parsing into a single `BlockGroup.Table` value.
 ///
-/// The groups list passed here is the full document group list; the view extracts
-/// header, row, and cell groups that belong to this table's subtree.
+/// Column count and alignment always come from `table.columns`; every row's `cells` array is
+/// already padded/truncated to `columns.count` by the parser, so this view never needs to guard
+/// against ragged rows itself.
 struct TableBlockView: View {
-    let groups: [BlockGroup]
+    let table: BlockGroup.Table
 
     @Environment(\.markdownTheme) private var theme
 
     var body: some View {
-        let rows = tableRows()
-        if rows.isEmpty { return AnyView(EmptyView()) }
-        return AnyView(
-            Grid(alignment: .topLeading, horizontalSpacing: 1, verticalSpacing: 1) {
-                ForEach(Array(rows.enumerated()), id: \.offset) { rowIndex, cells in
-                    GridRow {
-                        ForEach(Array(cells.enumerated()), id: \.offset) { _, cell in
-                            theme.inlineText(from: cell.content)
-                                .font(rowIndex == 0 ? theme.bodyFont.bold() : theme.bodyFont)
-                                .foregroundColor(theme.bodyColor)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 6)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(rowIndex == 0
-                                    ? theme.codeBackground
-                                    : (rowIndex % 2 == 0
-                                        ? theme.codeBackground.opacity(0.4)
-                                        : Color.clear)
-                                )
-                        }
-                    }
-                }
-            }
-            .background(theme.quoteBarColor.opacity(0.3))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-        )
-    }
-
-    private func tableRows() -> [[BlockGroup]] {
-        var rowMap: [Int: [BlockGroup]] = [:]
-        var rowOrder: [Int] = []
-
-        for group in groups {
-            switch group.kind {
-            case .tableHeaderRow:
-                if rowMap[-1] == nil {
-                    rowOrder.append(-1)
-                    rowMap[-1] = []
-                }
-            case .tableRow(let index):
-                if rowMap[index] == nil {
-                    rowOrder.append(index)
-                    rowMap[index] = []
-                }
-            case .tableCell:
-                if let lastKey = rowOrder.last {
-                    rowMap[lastKey]?.append(group)
-                }
-            default:
-                break
+        if table.columns.isEmpty {
+            EmptyView()
+        } else {
+            ScrollView(.horizontal, showsIndicators: false) {
+                grid
+                    .background(theme.tableBorderColor)
+                    .clipShape(RoundedRectangle(cornerRadius: theme.tableCornerRadius))
             }
         }
+    }
 
-        return rowOrder.compactMap { rowMap[$0] }
+    private var grid: some View {
+        Grid(alignment: .topLeading, horizontalSpacing: 1, verticalSpacing: 1) {
+            GridRow {
+                ForEach(Array(table.columns.enumerated()), id: \.offset) { _, column in
+                    cellView(column.header, alignment: column.alignment, isHeader: true, background: theme.tableHeaderBackground)
+                        .accessibilityAddTraits(.isHeader)
+                }
+            }
+            .accessibilityElement(children: .combine)
+
+            ForEach(table.rows) { row in
+                GridRow {
+                    ForEach(Array(zip(table.columns, row.cells).enumerated()), id: \.offset) { _, pair in
+                        let (column, cell) = pair
+                        cellView(
+                            cell,
+                            alignment: column.alignment,
+                            isHeader: false,
+                            background: row.id.isMultiple(of: 2) ? theme.tableRowAlternateBackground : Color.clear
+                        )
+                        .accessibilityLabel(Text(column.header) + Text(": ") + Text(cell))
+                    }
+                }
+                .accessibilityElement(children: .combine)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func cellView(
+        _ content: AttributedString,
+        alignment: PresentationIntent.TableColumn.Alignment,
+        isHeader: Bool,
+        background: Color
+    ) -> some View {
+        theme.inlineText(from: content)
+            .font(isHeader ? theme.bodyFont.bold() : theme.bodyFont)
+            .foregroundColor(theme.bodyColor)
+            .multilineTextAlignment(textAlignment(for: alignment))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .frame(minWidth: theme.tableMinColumnWidth, maxWidth: .infinity, alignment: frameAlignment(for: alignment))
+            .background(background)
+    }
+
+    private func textAlignment(for alignment: PresentationIntent.TableColumn.Alignment) -> TextAlignment {
+        switch alignment {
+        case .left:
+            .leading
+        case .center:
+            .center
+        case .right:
+            .trailing
+        default:
+            .leading
+        }
+    }
+
+    private func frameAlignment(for alignment: PresentationIntent.TableColumn.Alignment) -> Alignment {
+        switch alignment {
+        case .left:
+            .topLeading
+        case .center:
+            .top
+        case .right:
+            .topTrailing
+        default:
+            .topLeading
+        }
     }
 }
 

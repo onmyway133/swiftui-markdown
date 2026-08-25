@@ -28,4 +28,26 @@ struct MarkdownThemeTests {
     func githubSpacingIsTighter() {
         #expect(MarkdownTheme.github.blockSpacing < MarkdownTheme.default.blockSpacing)
     }
+
+    @Test("default preset has sensible image and table tokens")
+    func defaultPresetHasImageAndTableTokens() {
+        let theme = MarkdownTheme.default
+        #expect(theme.imageMaxHeight > 0)
+        #expect(theme.tableCornerRadius > 0)
+        #expect(theme.tableMinColumnWidth > 0)
+        _ = theme.tableHeaderBackground
+        _ = theme.tableRowAlternateBackground
+        _ = theme.tableBorderColor
+    }
+
+    @Test("github preset has sensible image and table tokens")
+    func githubPresetHasImageAndTableTokens() {
+        let theme = MarkdownTheme.github
+        #expect(theme.imageMaxHeight > 0)
+        #expect(theme.tableCornerRadius > 0)
+        #expect(theme.tableMinColumnWidth > 0)
+        _ = theme.tableHeaderBackground
+        _ = theme.tableRowAlternateBackground
+        _ = theme.tableBorderColor
+    }
 }

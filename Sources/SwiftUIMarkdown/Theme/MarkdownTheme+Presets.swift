@@ -22,7 +22,13 @@ extension MarkdownTheme {
         quoteBarColor: Color(white: 0.80),
         quoteTextColor: .secondary,
         linkColor: .accentColor,
-        blockSpacing: 12
+        blockSpacing: 12,
+        imageMaxHeight: 320,
+        tableHeaderBackground: Color(white: 0.92),
+        tableRowAlternateBackground: Color(white: 0.97),
+        tableBorderColor: Color(white: 0.85),
+        tableCornerRadius: 8,
+        tableMinColumnWidth: 100
     )
 
     /// GitHub-inspired theme with tighter spacing and familiar code colors.
@@ -46,6 +52,12 @@ extension MarkdownTheme {
         quoteBarColor: Color(red: 0.82, green: 0.84, blue: 0.87),
         quoteTextColor: Color(red: 0.40, green: 0.43, blue: 0.47),
         linkColor: Color(red: 0.02, green: 0.36, blue: 0.73),
-        blockSpacing: 8
+        blockSpacing: 8,
+        imageMaxHeight: 280,
+        tableHeaderBackground: Color(red: 0.94, green: 0.95, blue: 0.96),
+        tableRowAlternateBackground: Color(red: 0.98, green: 0.98, blue: 0.99),
+        tableBorderColor: Color(red: 0.87, green: 0.89, blue: 0.91),
+        tableCornerRadius: 6,
+        tableMinColumnWidth: 100
     )
 }
